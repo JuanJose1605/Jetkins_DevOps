@@ -1,37 +1,24 @@
 version: "3.9"
 
 services:
-  docker:
-    image: docker:dind
-    privileged: true
-    environment:
-      - DOCKER_TLS_CERTDIR=/certs
-    volumes:
-      - dind-storage:/var/lib/docker
-      - /certs/client
-    networks:
-      - jenkins-net
-
   jenkins:
-    build: .
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    user: root
     ports:
       - "8080:8080"
       - "50000:50000"
-    environment:
-      - DOCKER_HOST=tcp://docker:2376
-      - DOCKER_CERT_PATH=/certs/client
-      - DOCKER_TLS_VERIFY=1
-    depends_on:
-      - docker
     volumes:
       - jenkins_home:/var/jenkins_home
-      - /certs/client:/certs/client:ro
+      # 🔹 Montar el socket de Docker para que Jenkins pueda ejecutar "docker build"
+      - /var/run/docker.sock:/var/run/docker.sock
+      # 🔹 Montar el binario de Docker desde el host
+      - /usr/bin/docker:/usr/bin/docker
     networks:
       - jenkins-net
 
 volumes:
   jenkins_home:
-  dind-storage:
 
 networks:
   jenkins-net:
