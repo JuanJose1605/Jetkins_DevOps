@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    user: root
+    ports:
+      - "8080:8080"     # Interfaz web de Jenkins
+      - "50000:50000"   # Puerto para los agentes Jenkins
+    volumes:
+      - jenkins_home:/var/jenkins_home        # Datos persistentes de Jenkins
+      - /var/run/docker.sock:/var/run/docker.sock  # 🔹 Acceso al socket de Docker
+      - /usr/bin/docker:/usr/bin/docker            # Permite usar el binario de Docker dentro del contenedor
+      - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose # Permite usar docker-compose dentro de Jenkins
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false  # Opcional: desactiva el asistente inicial
+    restart: always
+
+volumes:
+  jenkins_home:
