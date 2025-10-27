@@ -4,16 +4,15 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Descarga el código del repo
                 checkout scm
             }
         }
 
-
         stage('Run Container') {
             steps {
                 script {
-                    sh 'docker-compose up -d'
+                    // ✅ Usar Compose v2 (ya incluido en Docker moderno)
+                    sh 'docker compose up -d'
                 }
             }
         }
